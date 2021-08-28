@@ -28,23 +28,22 @@ namespace TaskManager.DAL
         public void AddTask(Task task)
         {
             _context.Tasks.Add(task);
+            _context.SaveChanges();
         }
 
         public void UpdateTask(Task task)
         {
             _context.Entry(task).State = EntityState.Modified;
+            _context.SaveChanges();
         }
 
         public void DeleteTask(int id)
         {
             var task = _context.Tasks.Find(id);
             _context.Tasks.Remove(task);
-        }
-
-        public void Save()
-        {
             _context.SaveChanges();
         }
+        
 
         private bool disposed = false;
 

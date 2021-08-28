@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using TaskManager.DAL;
 using TaskManager.Utilities;
 
@@ -18,7 +17,16 @@ namespace TaskManager
         {
             MyDisplay.Menu();
 
-            Console.Write("Choose Your Option: ");
+            Console.BackgroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Task list: \n");
+            Console.ResetColor();
+            var items = _taskRepository.GetTasks();
+            items.ForEach(item =>
+            {
+                Console.WriteLine($"[{item.Id}] {item.Title}");
+            });
+
+            Console.Write("\nChoose Your Option: ");
             var option = Console.ReadLine();
 
             switch (option)
@@ -28,24 +36,17 @@ namespace TaskManager
 
                 case "1":
                     {
-                        var items = _taskRepository.GetTasks();
-                        Console.WriteLine(items.Select(item => item.Title));
+                        Console.WriteLine("\nEnter new task: ");
+                        var title = Console.ReadLine();
+                        _taskRepository.AddTask(new Models.Task { Title = title });
+                        MyDisplay.Success();
                     }
                     break;
 
                 case "2":
                     {
-                        Console.WriteLine("\nEnter new task: ");
-                        var title = Console.ReadLine();
-                        _taskRepository.AddTask(new Models.Task { Title = title });
-                    }
-                    break;
-
-                case "3":
-                    {
                         Console.WriteLine("Id of task to change: ");
                         var id = Int32.Parse(Console.ReadLine());
-
 
                         Console.WriteLine("Insert new task: ");
                         var title = Console.ReadLine();
@@ -53,22 +54,25 @@ namespace TaskManager
                         var task = _taskRepository.GetTask(id);
                         task.Title = title;
                         _taskRepository.UpdateTask(task);
+                        MyDisplay.Success();
                     }
                     break;
 
-                case "4":
+                case "3":
                     {
                         Console.WriteLine("Id task to delete: ");
                         var id = Int32.Parse(Console.ReadLine());
 
                         _taskRepository.DeleteTask(id);
+                        MyDisplay.Success();
                     }
                     break;
-
                 default:
-                    Run();
+                    MyDisplay.Failure();
+                    Console.WriteLine("Invalid option");
                     break;
             }
+            Run();
         }
     }
 }

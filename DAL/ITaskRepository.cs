@@ -11,6 +11,5 @@ namespace TaskManager.DAL
         void AddTask(Task task);
         void UpdateTask(Task task);
         void DeleteTask(int id);
-        void Save();
     }
 }
