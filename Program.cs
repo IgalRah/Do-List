@@ -1,50 +1,39 @@
-﻿using DoList.Utilities;
-using System;
+﻿using System.IO;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using TaskManager.DAL;
+using TaskManager.Data;
 
-namespace To_Do_List_Project_
+namespace TaskManager
 {
     class Program
     {
         static void Main(string[] args)
         {
-            while (true)
-            {
-                MyDisplay.Menu();
+            var services = ConfigureServices();
+            var serviceProvider = services.BuildServiceProvider();
 
-                Console.WriteLine("Choose Your Option: ");
-                var option = Console.ReadLine();
+            var entryPoint = serviceProvider.GetService<EntryPoint>();
+            entryPoint.Run();
+        }
 
-                if (option.Equals(0))
-                    break;
+        private static IConfiguration GetConfiguration()
+            => new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+                .Build();
 
-                try
-                {
-                    switch (option)
-                    {
-                        case "1":
-                            DoListDataAccess.Watch();
-                            break;
+        public static IServiceCollection ConfigureServices()
+        {
+            var configuration = GetConfiguration();
+            var connectionString = configuration.GetConnectionString("Default");
 
-                        case "2":
-                            DoListDataAccess.Add();
-                            break;
-
-                        case "3":
-                            DoListDataAccess.Edit();
-                            break;
-
-                        case "4":
-                            DoListDataAccess.Delete();
-                            break;
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
-            
+            return new ServiceCollection()
+                .AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(connectionString))
+                .AddSingleton<ITaskRepository, TaskRepository>()
+                .AddSingleton<EntryPoint>();
         }
     }
 }

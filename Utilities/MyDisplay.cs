@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using To_Do_List_Project_;
+using TaskManager.Models;
 
-namespace DoList.Utilities
+namespace TaskManager.Utilities
 {
     public partial class MyDisplay
     {
@@ -22,12 +18,12 @@ namespace DoList.Utilities
             Console.WriteLine();
         }
 
-        public static void Task(DoListModel doList)
+        public static void Task(Task doList)
         {
             Console.WriteLine();
             Console.WriteLine("Task List: ");
             Console.WriteLine("--------------------");
-            Console.WriteLine($"Id: {doList.Id} - Task: {doList.Task}");
+            Console.WriteLine($"Id: {doList.Id} - Task: {doList.Title}");
         }
 
         public static void Success()
@@ -36,4 +32,3 @@ namespace DoList.Utilities
         }
     }
 }
-
